@@ -2,7 +2,7 @@ import express from "express";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import morgan from "morgan";
-import { auth } from "./utils/auth";
+import { initializeAuth } from "./utils/auth";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import reminderRouter from "./routes/reminder.routes";
@@ -31,8 +31,9 @@ app.use(
     credentials: true,
   })
 );
-
-app.all("/api/auth/*splat", toNodeHandler(auth));
+initializeAuth().then((auth) => {
+  app.all("/api/auth/*splat", toNodeHandler(auth));
+});
 
 app.use(morgan("dev"));
 app.use(express.json());
